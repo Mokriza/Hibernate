@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
 
-    Connection connection = Util.getConnection();
+    private Connection connection = Util.getConnection();
 
     public UserDaoJDBCImpl() {
 
@@ -17,12 +17,12 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try (Statement statement = connection.createStatement()) {
-            String sqlCreateUsersTable = "CREATE TABLE pp_1_1_4.users " +
-                    "(id INT not NULL AUTO_INCREMENT, " +
-                    " name VARCHAR(50), " +
-                    " lastName VARCHAR (50), " +
-                    " age TINYINT(3) not NULL, " +
-                    " PRIMARY KEY (id))";
+            String sqlCreateUsersTable = "CREATE TABLE IF NOT EXISTS pp_1_1_4.users (\n" +
+                    "                    id INT not NULL AUTO_INCREMENT,  \n" +
+                    "                    name VARCHAR(50),  \n" +
+                    "                    lastName VARCHAR (50),\n" +
+                    "                    age TINYINT(3) not NULL,\n" +
+                    "                    PRIMARY KEY (id))";
             statement.execute(sqlCreateUsersTable);
         } catch (SQLException e) {
             System.out.println("При cоздании таблицы пользователей произошло исключение");
@@ -31,10 +31,10 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Statement statement = connection.createStatement()) {
-            String sqlDropUsersTable = "DROP TABLE pp_1_1_4.users";
+            String sqlDropUsersTable = "DROP TABLE IF EXISTS pp_1_1_4.users";
             statement.execute(sqlDropUsersTable);
         } catch (SQLException e) {
-            System.out.println("При удалении таблицы пользователей произошло исключение");
+            System.out.println("При удалении таблицы пользователей произошла ошибка");
         }
 
     }
@@ -45,11 +45,11 @@ public class UserDaoJDBCImpl implements UserDao {
             ps.setString(1, name);
             ps.setString(2, lastName);
             ps.setByte(3, age);
-
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Ошибка при сохранении в БД нового пользователя");
         }
+        System.out.println("User с именем " + name + " добавлен в базу данных");
     }
 
     public void removeUserById(long id) {
@@ -77,7 +77,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
                 result.add(user);
             }
-
+            System.out.println(result);
         } catch (SQLException e) {
             System.out.println("Ошибка при получении списка всех пользователей из БД");
         }
@@ -89,7 +89,7 @@ public class UserDaoJDBCImpl implements UserDao {
             String sqlDropUsersTable = "DELETE FROM pp_1_1_4.users";
             statement.execute(sqlDropUsersTable);
         } catch (SQLException e) {
-            System.out.println("При очистке таблицы пользователей произошло исключение");
+            System.out.println("При очистке таблицы пользователей произошла ошибка");
         }
     }
 }
