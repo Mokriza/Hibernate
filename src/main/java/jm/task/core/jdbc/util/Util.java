@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 public class Util {
     private static final String URL = "jdbc:mysql://localhost:3306/pp_1_1_4";
-    private static final String USERNAME = "jdbc:mysql://localhost:3306/pp_1_1_4";
-    private static final String PASSWORD = "jdbc:mysql://localhost:3306/pp_1_1_4";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
     public static Connection getConnection() {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            System.out.println("Соединение с БД установлено");
         } catch (SQLException e) {
-            System.out.println("Ошибка соединения с базой данных");
+            System.out.println("Ошибка соединения с БД");
         }
-        System.out.println("Соединение с БД установлено");
         return connection;
     }
 
