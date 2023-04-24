@@ -8,7 +8,6 @@ import java.sql.Connection;
 
 public class Main {
     public static void main(String[] args) {
-        Util.getConnection();
         UserDao userDao = new UserDaoJDBCImpl();
 
         userDao.createUsersTable();
