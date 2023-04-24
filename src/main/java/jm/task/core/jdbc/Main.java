@@ -1,7 +1,25 @@
 package jm.task.core.jdbc;
 
+import jm.task.core.jdbc.dao.UserDao;
+import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+import jm.task.core.jdbc.util.Util;
+
+import java.sql.Connection;
+
 public class Main {
     public static void main(String[] args) {
-        // реализуйте алгоритм здесь
+        Util.getConnection();
+        UserDao userDao = new UserDaoJDBCImpl();
+
+        userDao.createUsersTable();
+
+        userDao.saveUser("Андрей", "Белов", (byte) 27);
+        userDao.saveUser("Барак", "Обама", (byte) 55);
+        userDao.saveUser("Просто имя", "Просто фамилия", (byte) 18);
+
+        userDao.removeUserById(1);
+        userDao.getAllUsers();
+        userDao.cleanUsersTable();
+        userDao.dropUsersTable();
     }
 }
