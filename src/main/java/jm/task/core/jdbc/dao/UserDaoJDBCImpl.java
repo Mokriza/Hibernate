@@ -11,8 +11,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     private Connection connection = Util.getConnection();
 
-    private final String sqlRemoveUser = "DELETE FROM pp_1_1_4.users WHERE ID=?";
-    private final String sqlSaveUser = "INSERT INTO PP_1_1_4.users (name, lastname, age) VALUES (?, ?, ?)";
+    private final static String SQL_REMOVE_USER = "DELETE FROM pp_1_1_4.users WHERE ID=?";
+    private final static String SQL_SAVE_USER = "INSERT INTO PP_1_1_4.users (name, lastname, age) VALUES (?, ?, ?)";
 
     public UserDaoJDBCImpl() {
 
@@ -42,7 +42,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) {
 
-        try (PreparedStatement ps = connection.prepareStatement(sqlSaveUser);) {
+        try (PreparedStatement ps = connection.prepareStatement(SQL_SAVE_USER);) {
             ps.setString(1, name);
             ps.setString(2, lastName);
             ps.setByte(3, age);
@@ -54,7 +54,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        try (PreparedStatement ps = connection.prepareStatement(sqlRemoveUser)) {
+        try (PreparedStatement ps = connection.prepareStatement(SQL_REMOVE_USER)) {
             ps.setLong(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
