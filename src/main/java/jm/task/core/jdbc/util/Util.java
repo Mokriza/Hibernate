@@ -1,6 +1,7 @@
 package jm.task.core.jdbc.util;
 
 import jm.task.core.jdbc.model.User;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -13,6 +14,8 @@ public class Util {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
 
+    private static SessionFactory sessionFactory;
+
     public static Connection getConnection() {
         Connection connection = null;
         try {
@@ -23,9 +26,16 @@ public class Util {
         }
         return connection;
     }
+
     public static SessionFactory getSessionFactory() {
-        Configuration configuration = new Configuration().addAnnotatedClass(User.class);
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
+        if (sessionFactory == null) {
+            try {
+                Configuration configuration = new Configuration().addAnnotatedClass(User.class);
+                sessionFactory = configuration.buildSessionFactory();
+            } catch (HibernateException e) {
+                System.out.println("Ошибка создания Session Factory");
+            }
+        }
         return sessionFactory;
     }
 
