@@ -20,111 +20,92 @@ public class UserDaoHibernateImpl implements UserDao {
     private final static String SQL_DROP_TABLE = "DROP TABLE IF EXISTS pp_1_1_4.users";
 
     public UserDaoHibernateImpl() {
-
     }
-
 
     @Override
     public void createUsersTable() {
-        Session session = null;
-        try {
-            session = factory.getCurrentSession();
+        try (Session session = factory.getCurrentSession()) {
             Transaction t = session.beginTransaction();
-
             session.createSQLQuery(SQL_CREATE_TABLE).addEntity(User.class).executeUpdate();
-
             t.commit();
         } catch (HibernateException e) {
             System.out.println("Ошибка при создании новой таблицы User");
-        } finally {
-            session.close();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        Session session = null;
-        try {
-            session = factory.getCurrentSession();
+        try (Session session = factory.getCurrentSession()) {
             Transaction t = session.beginTransaction();
-
             session.createSQLQuery(SQL_DROP_TABLE).executeUpdate();
-
             t.commit();
         } catch (HibernateException e) {
             System.out.println("Ошибка при удалении таблицы users");
-        } finally {
-            session.close();
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Session session = null;
-        try {
-            session = factory.getCurrentSession();
-            Transaction t = session.beginTransaction();
-
+        Transaction transaction = null;
+        try (Session session = factory.getCurrentSession()) {
+            transaction = session.beginTransaction();
             User user = new User(name, lastName, age);
             session.save(user);
-            t.commit();
-
+            transaction.commit();
             System.out.println("User с именем " + name + " добавлен в базу данных");
-
         } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             System.out.println("Ошибка при добавлении пользователя в базу данных");
-        } finally {
-            session.close();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        Session session = null;
-        try {
-            session = factory.getCurrentSession();
-            Transaction t = session.beginTransaction();
-
+        Transaction transaction = null;
+        try (Session session = factory.getCurrentSession()) {
+            transaction = session.beginTransaction();
             User user = session.get(User.class, id);
             session.delete(user);
-
-            t.commit();
+            transaction.commit();
         } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             System.out.println("Ошибка при удалении пользователя по ID из базы данных");
-        } finally {
-            session.close();
         }
     }
 
     @Override
     public List<User> getAllUsers() {
-        Session session = null;
+        Transaction transaction = null;
         List<User> result = null;
-        try {
-            session = factory.getCurrentSession();
-            Transaction t = session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            transaction = session.beginTransaction();
             result = session.createQuery("FROM User").getResultList();
-            t.commit();
+            transaction.commit();
         } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             System.out.println("Ошибка при получении всех пользователей из базы данных");
-        } finally {
-            session.close();
         }
         return result;
     }
 
     @Override
     public void cleanUsersTable() {
-        Session session = null;
-        try {
-            session = factory.getCurrentSession();
-            Transaction t = session.beginTransaction();
+        Transaction transaction = null;
+        try (Session session = factory.getCurrentSession()) {
+            transaction = session.beginTransaction();
             session.createQuery("delete from User").executeUpdate();
-            t.commit();
+            transaction.commit();
         } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             System.out.println("Ошибка при удалении всех данных из базы данных");
-        } finally {
-            session.close();
         }
     }
 }
